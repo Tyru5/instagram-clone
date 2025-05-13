@@ -32,7 +32,7 @@ export function ImageGrid({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {images.map(
         (image) =>
           image.url && (
@@ -62,46 +62,42 @@ function ImageCard({
 
   return (
     <div
-      className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+      className="group relative overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative">
-        <img
-          src={image.url}
-          alt={image.description || ''}
-          className="aspect-square w-full object-cover"
-        />
+      <div className="relative aspect-square">
+        <img src={image.url} alt={image.description || ''} className="h-full w-full object-cover" />
         {isHovered && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onLike();
+                void onLike();
               }}
               className="transform transition-transform hover:scale-110"
             >
               {isLiked ? (
-                <span className="text-4xl">❤️</span>
+                <span className="text-3xl">❤️</span>
               ) : (
-                <span className="text-4xl">🤍</span>
+                <span className="text-3xl">🤍</span>
               )}
             </button>
           </div>
         )}
       </div>
 
-      <div className="p-4">
+      <div className="p-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={onLike}
-              className={`flex items-center gap-1.5 transition-colors ${
+              className={`flex items-center gap-1 transition-colors ${
                 isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'
               }`}
             >
-              <span className="text-xl">{isLiked ? '❤️' : '🤍'}</span>
-              <span className="font-medium">{image.likeCount}</span>
+              <span className="text-lg">{isLiked ? '❤️' : '🤍'}</span>
+              <span className="text-sm font-medium">{image.likeCount}</span>
             </button>
           </div>
 
@@ -112,7 +108,7 @@ function ImageCard({
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -127,10 +123,12 @@ function ImageCard({
         </div>
 
         {image.description && (
-          <p className="mt-2 line-clamp-2 text-sm text-gray-600">{image.description}</p>
+          <p className="mt-1.5 line-clamp-2 text-xs text-gray-600 dark:text-gray-300">
+            {image.description}
+          </p>
         )}
 
-        <div className="mt-2 text-xs text-gray-400">
+        <div className="mt-1 text-[10px] text-gray-400">
           {new Date(image._creationTime).toLocaleDateString()}
         </div>
       </div>

@@ -55,7 +55,7 @@ export function UploadBox() {
     <div className="mx-auto w-full max-w-2xl">
       <div
         {...getRootProps()}
-        className={`relative overflow-hidden rounded-xl transition-all duration-200 ${isDragActive ? 'ring-2 ring-purple-500 ring-offset-2' : ''} ${isUploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-lg'} `}
+        className={`relative overflow-hidden rounded-xl transition-all duration-200 ${isDragActive ? 'ring-2 ring-purple-500 ring-offset-2' : ''} ${isUploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-lg dark:hover:bg-gray-700 dark:hover:shadow-slate-700'}`}
       >
         <input {...getInputProps()} />
         <div
