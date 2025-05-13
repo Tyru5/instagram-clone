@@ -62,7 +62,7 @@ function ImageCard({
 
   return (
     <div
-      className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+      className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -70,16 +70,16 @@ function ImageCard({
         <img
           src={image.url}
           alt={image.description || ''}
-          className="w-full aspect-square object-cover"
+          className="aspect-square w-full object-cover"
         />
         {isHovered && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <button
               onClick={(e) => {
                 e.preventDefault();
                 onLike();
               }}
-              className="transform hover:scale-110 transition-transform"
+              className="transform transition-transform hover:scale-110"
             >
               {isLiked ? (
                 <span className="text-4xl">❤️</span>
@@ -108,7 +108,7 @@ function ImageCard({
           {onDelete && (
             <button
               onClick={onDelete}
-              className="text-gray-400 hover:text-red-500 transition-colors"
+              className="text-gray-400 transition-colors hover:text-red-500"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +127,7 @@ function ImageCard({
         </div>
 
         {image.description && (
-          <p className="mt-2 text-gray-600 text-sm line-clamp-2">{image.description}</p>
+          <p className="mt-2 line-clamp-2 text-sm text-gray-600">{image.description}</p>
         )}
 
         <div className="mt-2 text-xs text-gray-400">

@@ -52,33 +52,28 @@ export function UploadBox() {
   });
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="mx-auto w-full max-w-2xl">
       <div
         {...getRootProps()}
-        className={`
-          relative rounded-xl overflow-hidden transition-all duration-200
-          ${isDragActive ? 'ring-2 ring-purple-500 ring-offset-2' : ''}
-          ${isUploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-lg'}
-        `}
+        className={`relative overflow-hidden rounded-xl transition-all duration-200 ${isDragActive ? 'ring-2 ring-purple-500 ring-offset-2' : ''} ${isUploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-lg'} `}
       >
         <input {...getInputProps()} />
         <div
-          className={`
-          p-8 text-center border-2 border-dashed rounded-xl
-          ${isDragActive ? 'border-purple-500 bg-purple-50' : 'border-gray-200 bg-white'}
-        `}
+          className={`rounded-xl border-2 border-dashed p-8 text-center ${isDragActive ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'} `}
         >
           {isUploading ? (
             <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-purple-500"></div>
-              <p className="text-gray-600 font-medium">Uploading your image...</p>
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-purple-500 dark:border-gray-700"></div>
+              <p className="font-medium text-gray-600 dark:text-gray-300">
+                Uploading your image...
+              </p>
             </div>
           ) : isDragActive ? (
             <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-purple-500"
+                  className="h-8 w-8 text-purple-500 dark:text-purple-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -91,14 +86,16 @@ export function UploadBox() {
                   />
                 </svg>
               </div>
-              <p className="text-purple-600 font-medium">Drop your image here</p>
+              <p className="font-medium text-purple-600 dark:text-purple-400">
+                Drop your image here
+              </p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-gray-400"
+                  className="h-8 w-8 text-gray-400 dark:text-gray-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -112,8 +109,10 @@ export function UploadBox() {
                 </svg>
               </div>
               <div className="space-y-2">
-                <p className="text-gray-600 font-medium">Drag & drop your image here</p>
-                <p className="text-gray-400 text-sm">or click to browse</p>
+                <p className="font-medium text-gray-600 dark:text-gray-300">
+                  Drag & drop your image here
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-400">or click to browse</p>
               </div>
             </div>
           )}

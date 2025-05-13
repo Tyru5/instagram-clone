@@ -7,28 +7,49 @@ import { MyPhotos } from './MyPhotos';
 import { SignInForm } from './SignInForm';
 import { SignOutButton } from './SignOutButton';
 import { UploadBox } from './UploadBox';
+import { ThemeProvider, ThemeToggle } from './lib/theme';
 
+/**
+ * The main application component.
+ * Wraps the application content with the ThemeProvider.
+ */
 export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+/**
+ * Renders the main application content, including the header and main area.
+ * Manages the active tab state between 'stream' and 'photos'.
+ * Displays navigation and user information in the header when authenticated.
+ */
+function AppContent() {
   const [activeTab, setActiveTab] = useState<'stream' | 'photos'>('stream');
   const loggedInUser = useQuery(api.auth.loggedInUser);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+    <div className="min-h-screen bg-background">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-8">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
-                Instagram Clone
-              </h1>
+              <a
+                href="https://tiru5.dev"
+                className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-2xl font-bold text-transparent transition-transform hover:scale-105"
+              >
+                tiru5.dev
+              </a>
               <Authenticated>
-                <nav className="hidden md:flex items-center gap-6">
+                <nav className="hidden items-center gap-6 md:flex">
                   <button
                     onClick={() => setActiveTab('stream')}
                     className={`flex items-center gap-2 transition-colors ${
                       activeTab === 'stream'
-                        ? 'text-purple-600'
-                        : 'text-gray-600 hover:text-purple-600'
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-primary'
                     }`}
                   >
                     <svg
@@ -51,8 +72,8 @@ export default function App() {
                     onClick={() => setActiveTab('photos')}
                     className={`flex items-center gap-2 transition-colors ${
                       activeTab === 'photos'
-                        ? 'text-purple-600'
-                        : 'text-gray-600 hover:text-purple-600'
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-primary'
                     }`}
                   >
                     <svg
@@ -74,27 +95,28 @@ export default function App() {
                 </nav>
               </Authenticated>
             </div>
-            <Authenticated>
-              <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Authenticated>
                 {loggedInUser && (
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 font-medium text-white">
                       {loggedInUser.email?.[0].toUpperCase()}
                     </div>
-                    <span className="text-sm text-gray-600 hidden md:inline">
+                    <span className="hidden text-sm text-muted-foreground md:inline">
                       {loggedInUser.email}
                     </span>
                   </div>
                 )}
                 <SignOutButton />
-              </div>
-            </Authenticated>
+              </Authenticated>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="pt-16">
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="mx-auto max-w-5xl px-4 py-8">
           <Content activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
       </main>
@@ -125,8 +147,8 @@ function Content({
 
   if (loggedInUser === undefined) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-purple-500"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-primary"></div>
       </div>
     );
   }
@@ -135,23 +157,23 @@ function Content({
     <div className="flex flex-col gap-8">
       <Authenticated>
         <div className="flex flex-col gap-8">
-          <div className="md:hidden flex justify-center gap-6">
+          <div className="flex justify-center gap-6 md:hidden">
             <button
               onClick={() => setActiveTab('stream')}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all ${
+              className={`rounded-full px-6 py-2.5 font-medium transition-all ${
                 activeTab === 'stream'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/20'
+                  : 'bg-background text-muted-foreground hover:bg-accent'
               }`}
             >
               Feed
             </button>
             <button
               onClick={() => setActiveTab('photos')}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all ${
+              className={`rounded-full px-6 py-2.5 font-medium transition-all ${
                 activeTab === 'photos'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/20'
+                  : 'bg-background text-muted-foreground hover:bg-accent'
               }`}
             >
               My Photos
@@ -162,10 +184,17 @@ function Content({
         </div>
       </Authenticated>
       <Unauthenticated>
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">Welcome to Instagram Clone</h2>
-          <p className="text-gray-600 text-center mb-8">Sign in to start sharing your moments</p>
-          <SignInForm />
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 shadow-xl dark:border-gray-700 dark:bg-gray-800/50 dark:shadow-2xl dark:shadow-purple-900/10">
+            {/* <h2 className="text-2xl font-bold text-center mb-6 text-foreground">Photo__Stream</h2> */}
+            <h2 className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-2xl font-bold text-transparent">
+              Photo__Stream🪄
+            </h2>
+            <p className="mb-8 text-center text-muted-foreground">
+              Sign in to start sharing your moments
+            </p>
+            <SignInForm />
+          </div>
         </div>
       </Unauthenticated>
     </div>
