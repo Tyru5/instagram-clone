@@ -1,13 +1,13 @@
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../convex/_generated/api";
-import { ImageGrid } from "./ImageGrid";
-import { Id } from "../convex/_generated/dataModel";
-import { toast } from "sonner";
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../convex/_generated/api';
+import { ImageGrid } from './ImageGrid';
+import { Id } from '../convex/_generated/dataModel';
+import { toast } from 'sonner';
 
 export function MyPhotos() {
   const images = useQuery(api.images.listMyImages);
   const deleteImage = useMutation(api.images.deleteImage);
-  
+
   if (!images) {
     return (
       <div className="flex justify-center items-center">
@@ -16,12 +16,12 @@ export function MyPhotos() {
     );
   }
 
-  const handleDelete = async (imageId: Id<"images">) => {
+  const handleDelete = async (imageId: Id<'images'>) => {
     try {
       await deleteImage({ imageId });
-      toast.success("Image deleted");
+      toast.success('Image deleted');
     } catch (error) {
-      toast.error("Failed to delete image");
+      toast.error('Failed to delete image');
     }
   };
 

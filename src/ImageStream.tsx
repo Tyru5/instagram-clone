@@ -1,10 +1,10 @@
-import { useQuery } from "convex/react";
-import { api } from "../convex/_generated/api";
-import { ImageGrid } from "./ImageGrid";
+import { useQuery } from 'convex/react';
+import { api } from '../convex/_generated/api';
+import { ImageGrid } from './ImageGrid';
 
 export function ImageStream() {
   const images = useQuery(api.images.listImages);
-  
+
   if (!images) {
     return (
       <div className="flex justify-center items-center">
