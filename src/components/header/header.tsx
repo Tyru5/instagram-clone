@@ -1,12 +1,16 @@
 import { Authenticated } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+import { api } from '../../../convex/_generated/api';
 import { useQuery } from 'convex/react';
-import { ThemeToggle } from '../lib/theme';
-import { ReactElement, useState } from 'react';
-import { SignOutButton } from '../SignOutButton';
+import { ThemeToggle } from '../../lib/theme';
+import { ReactElement } from 'react';
+import { SignOutButton } from '../auth/SignOutButton';
 
-export const Header = (): ReactElement => {
-  const [activeTab, setActiveTab] = useState<'stream' | 'photos'>('stream');
+type HeaderProps = {
+  activeTab: 'stream' | 'photos';
+  handleSetActiveTab: (tab: 'stream' | 'photos') => void;
+};
+
+export const Header = ({ activeTab, handleSetActiveTab }: HeaderProps): ReactElement => {
   const loggedInUser = useQuery(api.auth.loggedInUser);
 
   return (
@@ -23,7 +27,7 @@ export const Header = (): ReactElement => {
             <Authenticated>
               <nav className="hidden items-center gap-6 md:flex">
                 <button
-                  onClick={() => setActiveTab('stream')}
+                  onClick={() => handleSetActiveTab('stream')}
                   className={`flex items-center gap-2 transition-colors ${
                     activeTab === 'stream'
                       ? 'text-primary'
@@ -47,7 +51,7 @@ export const Header = (): ReactElement => {
                   <span className="font-medium">Home</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab('photos')}
+                  onClick={() => handleSetActiveTab('photos')}
                   className={`flex items-center gap-2 transition-colors ${
                     activeTab === 'photos'
                       ? 'text-primary'

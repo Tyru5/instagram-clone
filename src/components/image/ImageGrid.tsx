@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from 'convex/react';
-import { api } from '../convex/_generated/api';
-import { Id } from '../convex/_generated/dataModel';
+import { api } from '../../../convex/_generated/api';
+import { Id } from '../../../convex/_generated/dataModel';
 import { toast } from 'sonner';
 import { useState, useEffect, useCallback } from 'react';
+import { AuroraText } from '../magicui/aurora-text';
+import { motion, AnimatePresence } from 'motion/react';
 
 type ImageType = {
   _id: Id<'images'>;
@@ -12,8 +14,18 @@ type ImageType = {
   description?: string;
   storageId: Id<'_storage'>;
   userId: Id<'users'>;
+  userEmail?: string;
 };
 
+/**
+ * A grid component that displays a collection of images with like and delete functionality.
+ * Includes a modal view for enlarged image display with keyboard navigation.
+ *
+ * @param {Object} props
+ * @param {ImageType[]} props.images - Array of image objects to display in the grid
+ * @param {function} [props.onDelete] - Optional callback when an image is deleted, receives image ID
+ * @returns {JSX.Element} Grid of images with modal functionality
+ */
 export function ImageGrid({
   images,
   onDelete,
@@ -114,30 +126,42 @@ export function ImageGrid({
         )}
       </div>
 
-      {isModalOpen && selectedImage && selectedImage.url && (
-        <ImageModal
-          image={selectedImage}
-          onClose={closeModal}
-          onPrev={() => navigateImages('prev')}
-          onNext={() => navigateImages('next')}
-          hasMultipleImages={images.filter((img) => img.url).length > 1}
-        />
-      )}
+      <AnimatePresence>
+        {isModalOpen && selectedImage && selectedImage.url && (
+          <ImageModal
+            image={selectedImage}
+            onClose={closeModal}
+            onPrev={() => navigateImages('prev')}
+            onNext={() => navigateImages('next')}
+            hasMultipleImages={images.filter((img) => img.url).length > 1}
+            key={selectedImage._id}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
-function ImageCard({
-  image,
-  onLike,
-  onDelete,
-  onClick,
-}: {
+type ImageCardProps = {
   image: Omit<ImageType, 'url'> & { url: string };
   onLike: () => void;
   onDelete?: () => void;
   onClick?: () => void;
-}) {
+};
+
+/**
+ * ImageCard component that displays an individual image with like and delete functionality.
+ * Shows hover effects and like/delete buttons. Displays image metadata like description and creation time.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.image - Image object containing url, description, likeCount, etc
+ * @param {Function} props.onLike - Callback function when like button is clicked
+ * @param {Function} [props.onDelete] - Optional callback function when delete button is clicked
+ * @param {Function} [props.onClick] - Optional callback function when card is clicked
+ *
+ * @returns React component for displaying an image card with interactions
+ */
+function ImageCard({ image, onLike, onDelete, onClick }: ImageCardProps) {
   const isLiked = useQuery(api.likes.isLiked, { imageId: image._id });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -176,7 +200,7 @@ function ImageCard({
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering the parent onClick
-                onLike();
+                void onLike();
               }}
               className={`flex items-center gap-1 transition-colors ${
                 isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'
@@ -225,19 +249,14 @@ function ImageCard({
   );
 }
 
-function ImageModal({
-  image,
-  onClose,
-  onPrev,
-  onNext,
-  hasMultipleImages,
-}: {
+type ImageModalProps = {
   image: ImageType;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
   hasMultipleImages: boolean;
-}) {
+};
+function ImageModal({ image, onClose, onPrev, onNext, hasMultipleImages }: ImageModalProps) {
   // Handle click outside to close
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -246,11 +265,21 @@ function ImageModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       onClick={handleBackdropClick}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
     >
-      <div className="relative max-h-[90vh] max-w-[90vw] scale-100 transform overflow-hidden rounded-lg bg-white shadow-2xl transition-all duration-300 dark:bg-gray-800">
+      <motion.div
+        className="relative max-h-[90vh] max-w-[90vw] scale-100 transform overflow-hidden rounded-lg bg-white shadow-2xl dark:bg-gray-800"
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.25 }}
+      >
         <div className="flex max-h-[90vh] flex-col md:flex-row">
           {/* Image container */}
           <div className="relative flex items-center justify-center bg-black/20 dark:bg-black/40 md:max-w-[60vw]">
@@ -259,7 +288,6 @@ function ImageModal({
               alt={image.description || ''}
               className="max-h-[50vh] max-w-full object-contain md:max-h-[90vh]"
             />
-
             {/* Navigation arrows */}
             {hasMultipleImages && (
               <>
@@ -312,7 +340,6 @@ function ImageModal({
               </>
             )}
           </div>
-
           {/* Image details */}
           <div className="flex flex-col overflow-y-auto p-4 md:w-80 md:p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -340,7 +367,32 @@ function ImageModal({
                 </svg>
               </button>
             </div>
-
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Uploaded on</h4>
+              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {new Date(image._creationTime).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+            <br />
+            <div>
+              {!!image?.userEmail && (
+                <>
+                  <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Uploaded by
+                  </h4>
+                  <p className="text-md mt-1 font-bold">
+                    <AuroraText colors={['#FFFF00', '#9ACD32', '#228B22', '#006400']}>
+                      {image.userEmail}
+                    </AuroraText>
+                  </p>
+                </>
+              )}
+            </div>
+            <br />
             <div className="space-y-4">
               {image.description && (
                 <div>
@@ -352,31 +404,20 @@ function ImageModal({
                   </p>
                 </div>
               )}
-
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Uploaded on
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                  {new Date(image._creationTime).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-
               <div>
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Likes</h4>
                 <div className="mt-1 flex items-center gap-1.5">
                   <span className="text-lg">❤️</span>
-                  <span className="text-sm font-medium">{image.likeCount}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {image.likeCount}
+                  </span>
                 </div>
+                {/* TODO: add comment section here */}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

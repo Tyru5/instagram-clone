@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../convex/_generated/api';
-import { ImageGrid } from './ImageGrid';
+import { ImageGrid } from './components/image/ImageGrid';
 import { Id } from '../convex/_generated/dataModel';
 import { toast } from 'sonner';
 

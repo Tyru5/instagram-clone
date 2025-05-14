@@ -2,16 +2,17 @@ import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
 import { useState } from 'react';
 import { Toaster } from 'sonner';
 import { api } from '../convex/_generated/api';
-import { BorderBeam } from './components/magicui/border-beam';
-import { ImageStream } from './ImageStream';
-import { MyPhotos } from './MyPhotos';
-import { SignInForm } from './SignInForm';
-import { UploadBox } from './UploadBox';
-import { ThemeProvider } from './lib/theme';
+import { Header } from './components/header/header';
+import { HeaderActions } from './components/header/header-actions';
 import { AuroraText } from './components/magicui/aurora-text';
-import { SparklesText } from './components/magicui/sparkles-text';
 import { BlurFade } from './components/magicui/blur-fade';
-import { Header } from './components/header';
+import { BorderBeam } from './components/magicui/border-beam';
+import { SparklesText } from './components/magicui/sparkles-text';
+import { ImageStream } from './components/image/ImageStream';
+import { ThemeProvider } from './lib/theme';
+import { MyPhotos } from './MyPhotos';
+import { SignInForm } from './components/auth/SignInForm';
+import { UploadBox } from './UploadBox';
 
 /**
  * The main application component.
@@ -33,12 +34,16 @@ export default function App() {
 function AppContent() {
   const [activeTab, setActiveTab] = useState<'stream' | 'photos'>('stream');
 
+  const handleSetActiveTab = (tab: 'stream' | 'photos') => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header activeTab={activeTab} handleSetActiveTab={handleSetActiveTab} />
       <main className="pt-16">
         <div className="mx-auto max-w-5xl px-4 py-8">
-          <Content activeTab={activeTab} setActiveTab={setActiveTab} />
+          <Content activeTab={activeTab} handleSetActiveTab={handleSetActiveTab} />
         </div>
       </main>
       <Toaster />
@@ -54,56 +59,42 @@ function AppContent() {
  *
  * @param props - The component props.
  * @param props.activeTab - The currently active tab ('stream' or 'photos').
- * @param props.setActiveTab - Function to set the active tab.
+ * @param props.handleSetActiveTab - Function to set the active tab.
  * @returns The main content component.
  */
 function Content({
   activeTab,
-  setActiveTab,
+  handleSetActiveTab,
 }: {
   activeTab: 'stream' | 'photos';
-  setActiveTab: (tab: 'stream' | 'photos') => void;
+  handleSetActiveTab: (tab: 'stream' | 'photos') => void;
 }) {
   const loggedInUser = useQuery(api.auth.loggedInUser);
 
   if (loggedInUser === undefined) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-primary"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-primary">
+          this shouldn't happen...
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Authenticated logic... */}
       <Authenticated>
         <div className="flex flex-col gap-8">
           <div className="flex justify-center gap-6 md:hidden">
-            <button
-              onClick={() => setActiveTab('stream')}
-              className={`rounded-full px-6 py-2.5 font-medium transition-all ${
-                activeTab === 'stream'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/20'
-                  : 'bg-background text-muted-foreground hover:bg-accent'
-              }`}
-            >
-              Feed
-            </button>
-            <button
-              onClick={() => setActiveTab('photos')}
-              className={`rounded-full px-6 py-2.5 font-medium transition-all ${
-                activeTab === 'photos'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/20'
-                  : 'bg-background text-muted-foreground hover:bg-accent'
-              }`}
-            >
-              My Photos
-            </button>
+            <HeaderActions activeTab={activeTab} handleSetActiveTab={handleSetActiveTab} />
           </div>
           <UploadBox />
           {activeTab === 'stream' ? <ImageStream /> : <MyPhotos />}
         </div>
       </Authenticated>
+
+      {/* Unauthenticated logic... */}
       <Unauthenticated>
         <div className="flex min-h-[20vh] items-center justify-center">
           <h1 className="text-4xl font-bold tracking-tighter md:text-5xl lg:text-7xl">

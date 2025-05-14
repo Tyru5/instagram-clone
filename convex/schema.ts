@@ -15,6 +15,14 @@ const applicationTables = {
   })
     .index('by_image', ['imageId'])
     .index('by_user_and_image', ['userId', 'imageId']),
+
+  comments: defineTable({
+    imageId: v.id('images'),
+    userId: v.id('users'),
+    comment: v.string(),
+  })
+    .index('by_image', ['imageId'])
+    .index('by_user_and_image', ['userId', 'imageId']),
 };
 
 export default defineSchema({
