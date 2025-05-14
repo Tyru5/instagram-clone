@@ -131,24 +131,17 @@ async function resizeImage(file: File): Promise<Blob> {
       let width = img.width;
       let height = img.height;
 
-      // Calculate dimensions
+      // Calculate dimensions while preserving aspect ratio
       const maxSize = 800;
-      if (width > height) {
-        if (width > maxSize) {
-          height = Math.round((height * maxSize) / width);
-          width = maxSize;
-        }
-      } else {
-        if (height > maxSize) {
-          width = Math.round((width * maxSize) / height);
-          height = maxSize;
-        }
+      if (width > maxSize || height > maxSize) {
+        const ratio = Math.min(maxSize / width, maxSize / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
       }
 
-      // Make it square
-      const size = Math.min(width, height);
-      canvas.width = size;
-      canvas.height = size;
+      // Use original aspect ratio
+      canvas.width = width;
+      canvas.height = height;
 
       const ctx = canvas.getContext('2d');
       if (!ctx) {
@@ -156,11 +149,8 @@ async function resizeImage(file: File): Promise<Blob> {
         return;
       }
 
-      // Calculate cropping
-      const offsetX = (width - size) / 2;
-      const offsetY = (height - size) / 2;
-
-      ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+      // Draw the entire image without cropping
+      ctx.drawImage(img, 0, 0, width, height);
 
       canvas.toBlob((blob) => {
         if (!blob) {
