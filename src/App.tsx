@@ -2,13 +2,16 @@ import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
 import { useState } from 'react';
 import { Toaster } from 'sonner';
 import { api } from '../convex/_generated/api';
+import { BorderBeam } from './components/magicui/border-beam';
 import { ImageStream } from './ImageStream';
 import { MyPhotos } from './MyPhotos';
 import { SignInForm } from './SignInForm';
 import { SignOutButton } from './SignOutButton';
 import { UploadBox } from './UploadBox';
 import { ThemeProvider, ThemeToggle } from './lib/theme';
-
+import { AuroraText } from './components/magicui/aurora-text';
+import { SparklesText } from './components/magicui/sparkles-text';
+import { BlurFade } from './components/magicui/blur-fade';
 /**
  * The main application component.
  * Wraps the application content with the ThemeProvider.
@@ -184,18 +187,44 @@ function Content({
         </div>
       </Authenticated>
       <Unauthenticated>
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 shadow-xl dark:border-gray-700 dark:bg-gray-800/50 dark:shadow-2xl dark:shadow-purple-900/10">
-            {/* <h2 className="text-2xl font-bold text-center mb-6 text-foreground">Photo__Stream</h2> */}
-            <h2 className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-2xl font-bold text-transparent">
-              Photo__Stream🪄
-            </h2>
+        <div className="flex min-h-[20vh] items-center justify-center">
+          <h1 className="text-4xl font-bold tracking-tighter md:text-5xl lg:text-7xl">
+            <SparklesText>
+              <AuroraText>Photo__Stream</AuroraText>🪄
+            </SparklesText>
+          </h1>
+        </div>
+        <div className="flex min-h-[30vh] items-center justify-center">
+          <div className="relative mx-auto flex max-w-md flex-col items-center justify-center overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-xl dark:bg-gray-800/50 dark:shadow-2xl dark:shadow-purple-900/10">
             <p className="mb-8 text-center text-muted-foreground">
               Sign in to start sharing your moments
             </p>
             <SignInForm />
+            <BorderBeam
+              duration={6}
+              size={400}
+              className="from-transparent via-red-500 to-transparent"
+            />
+            <BorderBeam
+              duration={6}
+              delay={3}
+              size={400}
+              className="from-transparent via-blue-500 to-transparent"
+            />
           </div>
         </div>
+        <footer className="mt-12 flex flex-col items-center justify-center text-center">
+          <BlurFade delay={1} inView>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+              <AuroraText>Because everyone wants another instagram clone, right?</AuroraText>
+            </h2>
+          </BlurFade>
+          <BlurFade delay={2} inView>
+            <h3 className="mt-8 text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
+              <AuroraText>Said no one ever.</AuroraText>
+            </h3>
+          </BlurFade>
+        </footer>
       </Unauthenticated>
     </div>
   );
