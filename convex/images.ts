@@ -41,10 +41,13 @@ export const listImages = query({
           .withIndex('by_image', (q) => q.eq('imageId', image._id))
           .collect();
 
+        const user = await ctx.db.get(image.userId);
+
         return {
           ...image,
           url,
           likeCount: likes.length,
+          userEmail: user?.email,
         };
       }),
     );
